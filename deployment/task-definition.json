@@ -1,0 +1,34 @@
+{
+  "family": "parcel-rate-advisor",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::158220645933:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "158220645933.dkr.ecr.ap-south-1.amazonaws.com/parcel-rate-backend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "frontend",
+      "image": "158220645933.dkr.ecr.ap-south-1.amazonaws.com/parcel-rate-frontend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
