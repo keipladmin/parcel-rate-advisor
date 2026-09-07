@@ -8,3 +8,6 @@ dist-automation/
 artifacts/
 test-results/
 playwright-report/
+deployment/terraform/.terraform/
+deployment/terraform/*.tfstate*
+deployment/terraform/terraform.tfvars
