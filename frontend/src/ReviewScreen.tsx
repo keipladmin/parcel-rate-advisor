@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Determination } from "./api";
 import { groupBy } from "./groupBy";
 import {
@@ -9,12 +9,6 @@ import {
   CONFIDENCE_THRESHOLD,
   type ReviewLine,
 } from "./responseExport";
-
-const cellStyle: CSSProperties = { padding: "0.25rem 0.5rem", borderBottom: "1px solid #eee" };
-const headerStyle: CSSProperties = { ...cellStyle, textAlign: "left", borderBottom: "1px solid #ccc" };
-const inputStyle: CSSProperties = { width: "6rem" };
-const pendingStyle: CSSProperties = { color: "#a15c00", fontWeight: 600 };
-const errorStyle: CSSProperties = { color: "crimson", fontSize: "0.8em" };
 
 interface ReviewScreenProps {
   determinations: Determination[];
@@ -56,7 +50,7 @@ export default function ReviewScreen({ determinations }: ReviewScreenProps) {
   }
 
   return (
-    <section style={{ marginTop: "2rem" }}>
+    <section className="card">
       <h2>Manual assignment review</h2>
       <p>
         Lines below the {(CONFIDENCE_THRESHOLD * 100).toFixed(0)}% confidence threshold are left
@@ -67,30 +61,29 @@ export default function ReviewScreen({ determinations }: ReviewScreenProps) {
         <div
           key={consignmentReference}
           data-testid={`consignment-${consignmentReference}`}
-          style={{ marginTop: "1.5rem" }}
+          className="consignment-block"
         >
-          <h3>{consignmentReference}</h3>
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                {[
-                  "Line",
-                  "Description",
-                  "Origin",
-                  "Commodity code",
-                  "Category",
-                  "Duty rate",
-                  "VAT rate",
-                  "Confidence",
-                  "Status",
-                  "",
-                ].map((heading) => (
-                  <th key={heading} style={headerStyle}>
-                    {heading}
-                  </th>
-                ))}
-              </tr>
-            </thead>
+          <h3 className="consignment-title">{consignmentReference}</h3>
+          <div className="table-scroll">
+            <table className="assignment-table">
+              <thead>
+                <tr>
+                  {[
+                    "Line",
+                    "Description",
+                    "Origin",
+                    "Commodity code",
+                    "Category",
+                    "Duty rate",
+                    "VAT rate",
+                    "Confidence",
+                    "Status",
+                    "",
+                  ].map((heading) => (
+                    <th key={heading}>{heading}</th>
+                  ))}
+                </tr>
+              </thead>
             <tbody>
               {rows.map(({ index, line }) => {
                 const { determination } = line;
@@ -98,23 +91,23 @@ export default function ReviewScreen({ determinations }: ReviewScreenProps) {
                 const status = statusFor(determination);
                 return (
                   <tr key={`${consignmentReference}-${lineRef}`} data-testid={`assignment-line-${lineRef}`}>
-                    <td style={cellStyle}>{determination.line_id}</td>
-                    <td style={cellStyle}>{determination.description}</td>
-                    <td style={cellStyle}>{determination.origin}</td>
-                    <td style={cellStyle}>{determination.commodity_code}</td>
-                    <td style={cellStyle}>
+                    <td>{determination.line_id}</td>
+                    <td>{determination.description}</td>
+                    <td>{determination.origin}</td>
+                    <td>{determination.commodity_code}</td>
+                    <td>
                       <input
                         data-testid={`category-input-${lineRef}`}
-                        style={inputStyle}
+                        className="rate-input"
                         value={line.category}
                         placeholder={status === "pending_review" ? "pending" : ""}
                         onChange={(e) => handleFieldChange(index, { category: e.target.value })}
                       />
                     </td>
-                    <td style={cellStyle}>
+                    <td>
                       <input
                         data-testid={`duty-rate-input-${lineRef}`}
-                        style={inputStyle}
+                        className="rate-input"
                         type="number"
                         step="0.0001"
                         min="0"
@@ -123,10 +116,10 @@ export default function ReviewScreen({ determinations }: ReviewScreenProps) {
                         onChange={(e) => handleFieldChange(index, { dutyRate: e.target.value })}
                       />
                     </td>
-                    <td style={cellStyle}>
+                    <td>
                       <input
                         data-testid={`vat-rate-input-${lineRef}`}
-                        style={inputStyle}
+                        className="rate-input"
                         type="number"
                         step="0.0001"
                         min="0"
@@ -135,17 +128,23 @@ export default function ReviewScreen({ determinations }: ReviewScreenProps) {
                         onChange={(e) => handleFieldChange(index, { vatRate: e.target.value })}
                       />
                     </td>
-                    <td style={cellStyle}>{determination.confidence.toFixed(2)}</td>
-                    <td style={{ ...cellStyle, ...(status === "pending_review" ? pendingStyle : {}) }}>
-                      <div data-testid={`line-status-${lineRef}`}>{line.confirmed ? "confirmed" : status}</div>
+                    <td>{determination.confidence.toFixed(2)}</td>
+                    <td>
+                      <div data-testid={`line-status-${lineRef}`} className={`badge badge-${line.confirmed ? "confirmed" : status}`}>
+                        {line.confirmed ? "confirmed" : status}
+                      </div>
                       {line.error && (
-                        <div data-testid={`line-error-${lineRef}`} style={errorStyle}>
+                        <div data-testid={`line-error-${lineRef}`} className="field-error">
                           {line.error}
                         </div>
                       )}
                     </td>
-                    <td style={cellStyle}>
-                      <button data-testid={`confirm-line-${lineRef}`} onClick={() => handleConfirm(index)}>
+                    <td>
+                      <button
+                        data-testid={`confirm-line-${lineRef}`}
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => handleConfirm(index)}
+                      >
                         Confirm
                       </button>
                     </td>
@@ -154,9 +153,10 @@ export default function ReviewScreen({ determinations }: ReviewScreenProps) {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       ))}
-      <button style={{ marginTop: "1rem" }} onClick={() => downloadResponseCsv(lines)}>
+      <button className="btn btn-primary" style={{ marginTop: "1.25rem" }} onClick={() => downloadResponseCsv(lines)}>
         Export response CSV
       </button>
     </section>

@@ -23,21 +23,31 @@ export default function App() {
   }
 
   return (
-    <main style={{ fontFamily: "inherit", padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
-      <h1>Parcel Rate Advisor</h1>
-      <p>
-        Upload a GEODATA export from <code>samples/</code> to parse it and run every
-        consignment line through the mocked <code>determine()</code> stub.
-      </p>
+    <div className="app-shell">
+      <header className="app-header">
+        <h1 className="brand">
+          <span className="brand-mark" aria-hidden="true">📦</span>
+          Parcel Rate Advisor
+        </h1>
+        <p>
+          Upload a GEODATA export to parse it and run every consignment line through the
+          mocked <code>determine()</code> stub, then review and export final rates.
+        </p>
+      </header>
 
-      <section style={{ marginTop: "2rem" }}>
-        <h2>Ingest a GEODATA export</h2>
-        <input type="file" onChange={handleFileUpload} disabled={ingesting} />
-        {ingesting && <p>Parsing...</p>}
-        {ingestError && <p style={{ color: "crimson" }}>Error: {ingestError}</p>}
-      </section>
+      <main className="app-content">
+        <section className="card">
+          <h2>Ingest a GEODATA export</h2>
+          <p>Upload one of the sample export files to get started.</p>
+          <div className="upload-row">
+            <input type="file" onChange={handleFileUpload} disabled={ingesting} />
+            {ingesting && <span className="status-note">Parsing…</span>}
+          </div>
+          {ingestError && <p className="error-banner">Error: {ingestError}</p>}
+        </section>
 
-      <ReviewScreen determinations={ingested} />
-    </main>
+        <ReviewScreen determinations={ingested} />
+      </main>
+    </div>
   );
 }
