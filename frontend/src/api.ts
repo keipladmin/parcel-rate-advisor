@@ -10,6 +10,9 @@ export interface Determination extends LineInput {
   duty_rate: number;
   vat_rate: number;
   confidence: number;
+  // Populated for lines ingested from a GEODATA export; absent for hand-submitted lines.
+  consignment_reference?: string | null;
+  line_id?: string | null;
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
@@ -20,6 +23,16 @@ export async function fetchDeterminations(lines: LineInput[]): Promise<Determina
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(lines),
   });
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status} ${response.statusText}`);
+  }
+  return response.json() as Promise<Determination[]>;
+}
+
+export async function ingestExport(file: File): Promise<Determination[]> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE}/api/ingest`, { method: "POST", body: formData });
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status} ${response.statusText}`);
   }

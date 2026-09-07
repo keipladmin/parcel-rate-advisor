@@ -7,16 +7,23 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:automation": "tsc --noEmit -p automation/tsconfig.json",
+    "test:automation": "playwright test -c automation/playwright.config.ts",
+    "automate:assignments": "tsx automation/runAutomation.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@types/node": "^20.14.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "playwright": "^1.47.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.0"
   }

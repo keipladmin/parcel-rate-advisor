@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from "react";
-import { fetchDeterminations, type Determination, type LineInput } from "./api";
+import { fetchDeterminations, ingestExport, type Determination, type LineInput } from "./api";
+import ReviewScreen from "./ReviewScreen";
 
 // Hardcoded sample lines to prove the mocked backend call works end to end. Candidates:
 // replace this with your own consignment data parsed from the sample export files.
@@ -21,6 +22,9 @@ export default function App() {
   const [determinations, setDeterminations] = useState<Determination[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ingested, setIngested] = useState<Determination[]>([]);
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestError, setIngestError] = useState<string | null>(null);
 
   async function handleRun() {
     setLoading(true);
@@ -31,6 +35,21 @@ export default function App() {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIngesting(true);
+    setIngestError(null);
+    try {
+      setIngested(await ingestExport(file));
+    } catch (err) {
+      setIngestError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIngesting(false);
+      e.target.value = "";
     }
   }
 
@@ -82,6 +101,19 @@ export default function App() {
           </tbody>
         </table>
       )}
+
+      <section style={{ marginTop: "2rem" }}>
+        <h2>Ingest a GEODATA export</h2>
+        <p>
+          Upload one of the sample export files from <code>samples/</code> to parse it and run
+          every consignment line through the mocked <code>determine()</code> stub.
+        </p>
+        <input type="file" onChange={handleFileUpload} disabled={ingesting} />
+        {ingesting && <p>Parsing...</p>}
+        {ingestError && <p style={{ color: "crimson" }}>Error: {ingestError}</p>}
+      </section>
+
+      <ReviewScreen determinations={ingested} />
     </main>
   );
 }
