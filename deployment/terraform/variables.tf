@@ -13,6 +13,7 @@ variable "project_name" {
 variable "github_repository" {
   description = "GitHub repo allowed to assume the deploy role via OIDC, as \"owner/repo\"."
   type        = string
+  default     = "keipladmin/parcel-rate-advisor"
 }
 
 variable "vpc_cidr" {
