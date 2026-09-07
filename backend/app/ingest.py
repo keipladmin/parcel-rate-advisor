@@ -31,6 +31,8 @@ def run_determinations(parsed: ParsedFile) -> list[Determination]:
                     duty_rate=rate.duty_rate,
                     vat_rate=rate.vat_rate,
                     confidence=rate.confidence,
+                    consignment_reference=consignment_reference,
+                    line_id=str(position),
                 )
             )
     return results

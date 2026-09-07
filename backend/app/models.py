@@ -29,3 +29,6 @@ class Determination(BaseModel):
     duty_rate: float
     vat_rate: float
     confidence: float
+    #: Populated for lines ingested from a GEODATA export; absent for hand-submitted lines.
+    consignment_reference: str | None = None
+    line_id: str | None = None

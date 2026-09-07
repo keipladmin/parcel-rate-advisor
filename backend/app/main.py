@@ -21,7 +21,7 @@ app = FastAPI(title="Parcel Rate Advisor (assessment starter)")
 # Local dev only — candidates should tighten this for their own deployed frontend origin.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173","http://localhost:8080"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

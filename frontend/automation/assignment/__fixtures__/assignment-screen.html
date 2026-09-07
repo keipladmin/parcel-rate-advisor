@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Assignment screen fixture</title>
+  </head>
+  <body>
+    <!-- Mirrors the data-testid contract of frontend/src/ReviewScreen.tsx, standing in for a
+         real deployment so automation tests don't depend on a running dev server. -->
+    <div data-testid="consignment-CONSIG-A">
+      <div data-testid="assignment-line-LINE-1">
+        <input data-testid="duty-rate-input-LINE-1" value="" />
+        <button data-testid="confirm-line-LINE-1" type="button">Confirm</button>
+        <div data-testid="line-error-LINE-1"></div>
+      </div>
+      <div data-testid="assignment-line-LINE-2">
+        <input data-testid="duty-rate-input-LINE-2" value="0.05" />
+        <button data-testid="confirm-line-LINE-2" type="button">Confirm</button>
+        <div data-testid="line-error-LINE-2"></div>
+      </div>
+      <div data-testid="assignment-line-LINE-3">
+        <input data-testid="duty-rate-input-LINE-3" value="" />
+        <button data-testid="confirm-line-LINE-3" type="button">Confirm</button>
+        <div data-testid="line-error-LINE-3"></div>
+      </div>
+    </div>
+    <script>
+      document.querySelectorAll("button[data-testid^='confirm-line-']").forEach((button) => {
+        button.addEventListener("click", () => {
+          const lineRef = button.getAttribute("data-testid").replace("confirm-line-", "");
+          const input = document.querySelector(`[data-testid="duty-rate-input-${lineRef}"]`);
+          const errorEl = document.querySelector(`[data-testid="line-error-${lineRef}"]`);
+          const value = Number(input.value);
+          errorEl.textContent = Number.isNaN(value) || value < 0
+            ? "Rate must be greater than or equal to 0"
+            : "";
+        });
+      });
+    </script>
+  </body>
+</html>

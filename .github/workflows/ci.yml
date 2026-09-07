@@ -34,6 +34,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Lint automation
+        run: npm run lint:automation
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Automation adapter tests
+        run: npm run test:automation
+
   backend:
     runs-on: ubuntu-latest
 
