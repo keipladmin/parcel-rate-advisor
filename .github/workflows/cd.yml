@@ -16,6 +16,7 @@ env:
 
 jobs:
   deploy:
+    environment: production
     runs-on: ubuntu-latest
     # Only deploy once CI has actually passed on main — never ship an untested build.
     if: github.event.workflow_run.conclusion == 'success'
@@ -39,6 +40,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+          audience: sts.amazonaws.com
 
       - name: Log in to Amazon ECR
         id: ecr-login
