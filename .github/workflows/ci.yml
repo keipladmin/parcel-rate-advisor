@@ -51,10 +51,13 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt ruff
+        run: pip install -r requirements.txt ruff pytest
 
       - name: Lint
         run: ruff check .
+
+      - name: Test
+        run: pytest -q
 
       - name: Compile
         run: python -m compileall .

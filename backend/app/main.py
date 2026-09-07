@@ -8,11 +8,13 @@ response export, and headless-browser automation are your task, not this file's.
 
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from .determine import determine
+from .ingest import run_determinations
 from .models import Determination, LineInput
+from .parser import parse_export
 
 app = FastAPI(title="Parcel Rate Advisor (assessment starter)")
 
@@ -49,3 +51,14 @@ def create_determinations(lines: list[LineInput]) -> list[Determination]:
             )
         )
     return results
+
+
+@app.post("/api/ingest", response_model=list[Determination])
+async def ingest_export(file: UploadFile) -> list[Determination]:
+    """Parse an uploaded GEODATA export file and run every line through `determine()`."""
+    raw = await file.read()
+    try:
+        parsed = parse_export(raw)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return run_determinations(parsed)
