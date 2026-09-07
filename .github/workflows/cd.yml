@@ -16,7 +16,6 @@ env:
 
 jobs:
   deploy:
-    environment: production
     runs-on: ubuntu-latest
     # Only deploy once CI has actually passed on main — never ship an untested build.
     if: github.event.workflow_run.conclusion == 'success'
